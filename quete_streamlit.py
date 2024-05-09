@@ -36,19 +36,23 @@ with col3:
 
 # Graphique 3
 st.markdown("**Engine power by Year and Continent**")
-fig1 = px.bar(df, x="year", y="hp", color='continent', barmode='group')
-fig1.update_layout(title="Engine Power by Year and Continent")
-st.plotly_chart(fig1)
+fig1, ax1 = plt.subplots()
+sns.barplot(data=df, x="year", y="hp", hue="continent", ax=ax1)
+ax1.set_title("Engine Power by Year and Continent")
+st.pyplot(fig1)
 
 # Graphique 4
 st.markdown("**MPG vs. Year by Continent**")
 selected_continent = st.selectbox("Choose a Continent:", df['continent'].unique())
 filtered_df = df[df['continent'] == selected_continent]
-figure = px.bar(filtered_df, x='year', y='mpg', title=f"MPG over Years in {selected_continent}")
-st.plotly_chart(figure)
+fig2, ax2 = plt.subplots()
+sns.barplot(data=filtered_df, x='year', y='mpg', ax=ax2)
+ax2.set_title(f"MPG over Years in {selected_continent}")
+st.pyplot(fig2)
 
 #image de fin
 
 with st.expander("Clique pour voir si tu as réussi ta correction "):
    st.write("Bien sûr que oui !")
    st.image(r"C:\Users\Admin\Desktop\perso\pouce.jpg")
+
