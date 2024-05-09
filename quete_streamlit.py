@@ -27,9 +27,18 @@ with col3:
     st.markdown("**Graphique de distribution**")
     pal = sns.color_palette(palette='coolwarm', n_colors=12)
     g = sns.FacetGrid(data=df, row='year', hue='year', aspect=15, height=0.75, palette=pal)
+    
+    def add_horizontal_line(*args, **kwargs):
+        plt.axhline(y=0, lw=2, clip_on=False, **kwargs)
+        
     g.map(sns.kdeplot, 'cylinders', bw_adjust=1, clip_on=False, fill=True, alpha=1, linewidth=1.5)
-    g.map(plt.axhline, y=0, lw=2, clip_on=False)
-    g.fig.suptitle("Density of Car Cylinders by Year of Manufacture", fontsize=15, fontweight='bold', ha='center', y=1.05)
+    g.map(add_horizontal_line)
+    
+    g.fig.suptitle("Density of Car Cylinders by Year of Manufacture",
+                   fontsize=15,
+                   fontweight='bold',
+                   ha='center', y=1.05)
+    
     st.pyplot(g.fig)
     st.caption("Par ce graph nous pouvons visualiser l'évolution des voitures cylindrées chaque année")
 
@@ -49,9 +58,7 @@ sns.barplot(data=filtered_df, x='year', y='mpg', ax=ax2)
 ax2.set_title(f"MPG over Years in {selected_continent}")
 st.pyplot(fig2)
 
-#image de fin
-
+# Image de fin
 with st.expander("Clique pour voir si tu as réussi ta correction "):
    st.write("Bien sûr que oui !")
-   st.image(r"C:\Users\Admin\Desktop\perso\pouce.jpg")
 
