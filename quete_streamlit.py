@@ -2,71 +2,53 @@ import streamlit as st
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
-
-
-st.title('Welcome!')
-
-st.write("Je n'ai pas réussi à mettre une selectbox avec les continents, j'abandonne...")
-
-
-url = "https://raw.githubusercontent.com/murpi/wilddata/master/quests/cars.csv"
-df = pd.read_csv(url, sep =",")
-
-
-df_num = df.select_dtypes(include='number').corr()
-
-viz = sns.heatmap(df_num,cmap ="YlGn")
-viz.set_title("Correlation Map of Car Features", pad=20)
-
-st.pyplot(viz.figure)
-
-# we generate a color palette with Seaborn.color_palette()
-pal = sns.color_palette(palette='coolwarm', n_colors=12)
-
-# in the sns.FacetGrid class, the 'hue' argument is the one that is the one that will be represented by colors with 'palette'
-g = sns.FacetGrid(data = df, row='year', hue='year', aspect=15, height=0.75, palette=pal)
-
-# then we add the densities kdeplots for each year
-g.map(sns.kdeplot, 'cylinders',
-      bw_adjust=1, clip_on=False,
-      fill=True, alpha=1, linewidth=1.5)
-
-# here we add a horizontal line for each plot
-g.map(plt.axhline, y=0,lw=2, clip_on=False)
-
-g.fig.suptitle("Density of Car Cylinders by Year of Manufacture",
-               fontsize=15,
-               fontweight='bold',
-               ha='center',y=1.05)
-
-st.pyplot(g.figure)
-
-
-
-import streamlit as st
-import pandas as pd
 import plotly.express as px
 
-# Titre de l'application Streamlit
-st.title("MPG vs. Year by Continent")
+st.title('Bienvenue sur mon application')
 
-# Création des widgets qui changeront le graphique
-selected_continent = st.selectbox("Choose a Continent:", ['US', 'Japan', 'Europe'])
+url = "https://raw.githubusercontent.com/murpi/wilddata/master/quests/cars.csv"
+df = pd.read_csv(url, sep=",")
 
-# Filtrage des données en fonction du continent sélectionné
-filtered_df = df[df['continent'] == selected_continent]
+col1, col2, col3 = st.columns(3)
 
-# Création du graphique Plotly Express
-fig = px.line(filtered_df, x='year', y='mpg', title=f"MPG over Years in {selected_continent}")
+with col1:
+    st.markdown("**Dataframe de voitures**")
+    st.dataframe(df.head())
 
-# Affichage du graphique Plotly dans Streamlit
-st.plotly_chart(fig)
+with col2:
+    st.markdown("**Graphique de corrélation**")
+    df_num = df.select_dtypes(include='number').corr()
+    viz = sns.heatmap(df_num, cmap="YlGn")
+    viz.set_yticklabels(viz.get_yticklabels(), fontsize='small')
+    viz.set_title("Correlation Map of Car Features", pad=20)
+    st.pyplot(viz.figure)
+    st.caption('Par ce graph nous pouvons établir les corrélations les plus flagrantes')
 
+with col3:
+    st.markdown("**Graphique de distribution**")
+    pal = sns.color_palette(palette='coolwarm', n_colors=12)
+    g = sns.FacetGrid(data=df, row='year', hue='year', aspect=15, height=0.75, palette=pal)
+    g.map(sns.kdeplot, 'cylinders', bw_adjust=1, clip_on=False, fill=True, alpha=1, linewidth=1.5)
+    g.map(plt.axhline, y=0, lw=2, clip_on=False)
+    g.fig.suptitle("Density of Car Cylinders by Year of Manufacture", fontsize=15, fontweight='bold', ha='center', y=1.05)
+    st.pyplot(g.fig)
+    st.caption("Par ce graph nous pouvons visualiser l'évolution des voitures cylindrées chaque année")
 
-
-
+# Graphique 3
+st.markdown("**Engine power by Year and Continent**")
 fig1 = px.bar(df, x="year", y="hp", color='continent', barmode='group')
-
 fig1.update_layout(title="Engine Power by Year and Continent")
-
 st.plotly_chart(fig1)
+
+# Graphique 4
+st.markdown("**MPG vs. Year by Continent**")
+selected_continent = st.selectbox("Choose a Continent:", df['continent'].unique())
+filtered_df = df[df['continent'] == selected_continent]
+figure = px.bar(filtered_df, x='year', y='mpg', title=f"MPG over Years in {selected_continent}")
+st.plotly_chart(figure)
+
+#image de fin
+
+with st.expander("Clique pour voir si tu as réussi ta correction "):
+   st.write("Bien sûr que oui !")
+   st.image(r"C:\Users\Admin\Desktop\perso\pouce.jpg")
