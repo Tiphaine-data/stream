@@ -1,1 +1,58 @@
+import streamlit as st
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+import plotly.express as px
+
+st.title('Bienvenue sur mon application')
+
+url = "https://raw.githubusercontent.com/murpi/wilddata/master/quests/cars.csv"
+df = pd.read_csv(url, sep=",")
+
+col1, col2, col3 = st.columns(3)
+
+with col1:
+    st.markdown("**Dataframe de voitures**")
+    st.dataframe(df.head())
+
+with col2:
+    st.markdown("**Graphique de corrélation**")
+    df_num = df.select_dtypes(include='number').corr()
+    viz = sns.heatmap(df_num, cmap="YlGn")
+    viz.set_yticklabels(viz.get_yticklabels(), fontsize='small')
+    viz.set_title("Correlation Map of Car Features", pad=20)
+    st.pyplot(viz.figure)
+    st.caption('Par ce graph nous pouvons établir les corrélations les plus flagrantes')
+
+with col3:
+    st.markdown("**Graphique de distribution**")
+    pal = sns.color_palette(palette='coolwarm', n_colors=12)
+    g = sns.FacetGrid(data=df, row='year', hue='year', aspect=15, height=0.75, palette=pal)
+    g.map(sns.kdeplot, 'cylinders', bw_adjust=1, clip_on=False, fill=True, alpha=1, linewidth=1.5)
+    g.map(plt.axhline, y=0, lw=2, clip_on=False)
+    g.fig.suptitle("Density of Car Cylinders by Year of Manufacture", fontsize=15, fontweight='bold', ha='center', y=1.05)
+    st.pyplot(g.fig)
+    st.caption("Par ce graph nous pouvons visualiser l'évolution des voitures cylindrées chaque année")
+
+# Graphique 3
+st.markdown("**Engine power by Year and Continent**")
+fig1, ax1 = plt.subplots()
+sns.barplot(data=df, x="year", y="hp", hue="continent", ax=ax1)
+ax1.set_title("Engine Power by Year and Continent")
+st.pyplot(fig1)
+
+# Graphique 4
+st.markdown("**MPG vs. Year by Continent**")
+selected_continent = st.selectbox("Choose a Continent:", df['continent'].unique())
+filtered_df = df[df['continent'] == selected_continent]
+fig2, ax2 = plt.subplots()
+sns.barplot(data=filtered_df, x='year', y='mpg', ax=ax2)
+ax2.set_title(f"MPG over Years in {selected_continent}")
+st.pyplot(fig2)
+
+#image de fin
+
+with st.expander("Clique pour voir si tu as réussi ta correction "):
+   st.write("Bien sûr que oui !")
+   st.image(r"C:\Users\Admin\Desktop\perso\pouce.jpg")
 
